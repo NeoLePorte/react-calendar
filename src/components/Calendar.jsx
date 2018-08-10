@@ -1,15 +1,8 @@
 import React, { Component } from 'react'
-import { Grid, Header, Segment } from 'semantic-ui-react'
+import { Grid, Header, Segment, Divider } from 'semantic-ui-react'
 import dateFns from "date-fns";
 
 export default class Calendar extends Component {
-    constructor(props) {
-    super(props)
-    this.state = {
-        currentMonth: new Date(),
-        headerDate: new Date(),
-    };
-}
 
     // sorts colors for calendar days
     dayColors(day, endDate) {
@@ -41,16 +34,32 @@ export default class Calendar extends Component {
         );
       }
 
+      //renders calendar days in cells
       renderCells() {
       const startDate = dateFns.startOfWeek(this.props.startDate);
       const endDate = dateFns.addDays(this.props.startDate, this.props.numOfDays);
       const dayDateFormat = "D";
+      const headerDateFormat = "MMMM YYYY";
+      let headerKey = 0;
       let days = [];
       let day = startDate;
       let formattedDate = "";
     
     while (day <= endDate) {
         for (let i = 0; i < 7; i++) {
+        // This snippet adds headers to the calendar between months but pushes the calendar days around.
+        if (dateFns.isFirstDayOfMonth(day)) {
+            days.push(
+                <React.Fragment key={headerKey}>
+                <Grid>
+                    <Divider  horizontal>
+                        <Header textAlign="center">{dateFns.format(day, headerDateFormat)}</Header>
+                    </Divider>
+                </Grid>
+                </React.Fragment>
+            )
+            headerKey++
+        }
         formattedDate = dateFns.format(day, dayDateFormat);
         // pushes calendar days to calendar
             days.push(
